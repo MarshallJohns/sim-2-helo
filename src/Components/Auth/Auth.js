@@ -1,5 +1,7 @@
 import Axios from 'axios'
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { loginUser } from '../../ducks/reducer'
 
 class Auth extends Component {
     constructor() {
@@ -21,7 +23,9 @@ class Auth extends Component {
         const { username, password } = this.state
         if (username && password) {
             Axios.post('/auth/register', { username, password }).then(res => {
+                const { id, username, profile_pic } = res.data
                 this.props.history.push('/dashboard')
+                this.props.loginUser(id, username, profile_pic)
             }).catch(err => alert(err.response.request.response))
         } else {
             alert('Please fill out both fields')
@@ -32,7 +36,9 @@ class Auth extends Component {
         const { username, password } = this.state
         if (username && password) {
             Axios.post('/auth/login', { username, password }).then(res => {
+                const { id, username, profile_pic } = res.data
                 this.props.history.push('/dashboard')
+                this.props.loginUser(id, username, profile_pic)
 
             }).catch(err => alert(err.response.request.response))
         } else {
@@ -67,4 +73,4 @@ class Auth extends Component {
     }
 }
 
-export default Auth
+export default connect(null, { loginUser })(Auth)

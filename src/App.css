@@ -3,6 +3,12 @@
   margin: 0;
   box-sizing: border-box;
 }
+ 
+.App{
+  padding-left: 100px;
+  width: 100%;
+  height: 100vh;
+}
 
 .auth {
   width: 100vw;
@@ -11,6 +17,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  
 }
 
 .auth-input {
@@ -58,4 +68,64 @@
   cursor: pointer;
   
 }
+
+.navbar{
+  height: 100vw;
+  width: 100px;
+  background-color: black;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding-top: 20px;
+  background-image: linear-gradient(0deg,#ff7abe,#ff9770);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.current-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.username{
+  color: #f2f2f2;
+  margin-top: 10px;
+}
+
+.profile-pic{
+  width: 75px;
+  height: 75px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 14px 28px 0 rgba(0,0,0,.25), 0 10px 10px 0 rgba(0,0,0,.26);
+}
+
+.nav-links{
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+}
+
+.links{
+  margin-top: 20px;
+}
+
+.logout{
+  position: fixed;
+  bottom: 15px;
+  
+}
+
+.search{
+  width: 80%;
+  height: 75px;
+  background-color: hotpink;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
 
