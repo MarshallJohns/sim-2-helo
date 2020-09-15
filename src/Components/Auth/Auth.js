@@ -1,3 +1,4 @@
+import Axios from 'axios'
 import React, { Component } from 'react'
 
 class Auth extends Component {
@@ -7,12 +8,36 @@ class Auth extends Component {
             username: '',
             password: ''
         }
+
     }
 
     handleChange = (e) => {
         this.setState({
             [e.target.name]: e.target.value
         })
+    }
+
+    handleRegister() {
+        const { username, password } = this.state
+        if (username && password) {
+            Axios.post('/auth/register', { username, password }).then(res => {
+                this.props.history.push('/dashboard')
+            }).catch(err => alert(err.response.request.response))
+        } else {
+            alert('Please fill out both fields')
+        }
+    }
+
+    handleLogin() {
+        const { username, password } = this.state
+        if (username && password) {
+            Axios.post('/auth/login', { username, password }).then(res => {
+                this.props.history.push('/dashboard')
+
+            }).catch(err => alert(err.response.request.response))
+        } else {
+            alert('Please fill out both fields')
+        }
     }
 
     render() {
@@ -33,8 +58,8 @@ class Auth extends Component {
                         </div>
                     </div>
                     <div className='auth-btn-container'>
-                        <button>Login</button>
-                        <button>Register</button>
+                        <button onClick={() => this.handleLogin()}>Login</button>
+                        <button onClick={() => this.handleRegister()}>Register</button>
                     </div>
                 </div>
             </div>
