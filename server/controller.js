@@ -36,5 +36,27 @@ module.exports = {
         delete existingUser.password
 
         res.status(200).send(existingUser)
+    },
+
+    getPosts: async (req, res) => {
+        const db = req.app.get('db')
+        const { userId } = req.params
+        const { user_posts, search } = req.query
+
+        const posts = await db.get_posts()
+
+        // console.log(posts)
+        if (user_posts && search) {
+            console.log('hit with search and userposts')
+            const lowerCaseSearch = search.toLowerCase()
+            const filteredPosts = posts.filter(post => post.title.toLowerCase().includes(lowerCaseSearch))
+            return res.status(200).send(filteredPosts)
+        }
+
+        if (!user_posts && !search) {
+            console.log('hit for neither')
+            const filteredPosts = posts.filter(post => post.author_id != userId)
+            res.status(200).send(filteredPosts)
+        }
     }
 }
