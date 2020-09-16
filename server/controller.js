@@ -45,18 +45,28 @@ module.exports = {
 
         const posts = await db.get_posts()
 
-        // console.log(posts)
-        if (user_posts && search) {
-            console.log('hit with search and userposts')
+        //* if user_posts is true and there is a search
+        if (user_posts != 'false' && search) {
             const lowerCaseSearch = search.toLowerCase()
             const filteredPosts = posts.filter(post => post.title.toLowerCase().includes(lowerCaseSearch))
             return res.status(200).send(filteredPosts)
         }
 
-        if (!user_posts && !search) {
-            console.log('hit for neither')
-            const filteredPosts = posts.filter(post => post.author_id != userId)
-            res.status(200).send(filteredPosts)
+        //* if user_posts is false but there is a search
+        if (user_posts === 'false' && search) {
+            const lowerCaseSearch = search.toLowerCase()
+            const filteredPosts = posts.filter(post => post.author_id != userId && post.title.toLowerCase().includes(lowerCaseSearch))
+            return res.status(200).send(filteredPosts)
         }
+
+        //* if user_posts if false and no search
+        if (user_posts === 'false') {
+            const filteredPosts = posts.filter(post => post.author_id != userId)
+            return res.status(200).send(filteredPosts)
+        }
+
+        //* if user_posts is true and no search
+        res.status(200).send(posts)
+
     }
 }
