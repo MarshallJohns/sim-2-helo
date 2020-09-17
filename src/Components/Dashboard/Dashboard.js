@@ -1,4 +1,7 @@
+import Axios from 'axios'
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
 
 class Dashboard extends Component {
     constructor() {
@@ -10,11 +13,49 @@ class Dashboard extends Component {
         }
     }
 
+    componentDidMount() {
+        this.handlePosts()
+    }
+
+    handlePosts() {
+        const { user_id } = this.props
+        const { search, userPosts } = this.state
+
+        Axios.get(`/api/posts/${user_id}?user_posts=true`).then(res => {
+            this.setState({ posts: res.data })
+        })
+
+
+        if (userPosts && search) {
+            Axios.get(`/api/posts/${user_id}?user_posts=${userPosts}&search=${search}`)
+                .then(res => { this.setState({ posts: res.data }) })
+                .catch(err => { console.log(err.message) })
+        }
+
+        if (!userPosts && search) {
+            Axios.get(`/api/posts/${user_id}?search=${search}`)
+                .then(res => { this.setState({ posts: res.data }) })
+                .catch(err => console.log(err.message))
+        }
+
+        if (!userPosts) {
+            Axios.get(`/api/posts/${user_id}?user_posts=false`)
+                .then(res => this.setState({ posts: res.data }))
+                .catch(err => console.log(err.message))
+        }
+
+    }
+
     handleSearch = (e) => {
         this.setState({ search: e.target.value })
     }
 
     render() {
+        const posts = this.state.posts.map(post => {
+            return (<div>{post.title}</div>)
+        })
+        { console.log(posts) }
+
         return (
             <div className='dashboard'>
                 <div className='search'>
@@ -25,9 +66,12 @@ class Dashboard extends Component {
                     </div>
                     <div className='checkbox'> My Posts <input type='checkbox' onClick={() => this.setState({ userPosts: !this.state.userPosts })} /></div>
                 </div>
+                <div>{posts}</div>
             </div >
         )
     }
 }
 
-export default Dashboard
+const mapStateToProps = (reduxState) => reduxState
+
+export default connect(mapStateToProps)(Dashboard)

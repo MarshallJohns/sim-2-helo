@@ -36,9 +36,9 @@ class Auth extends Component {
         const { username, password } = this.state
         if (username && password) {
             Axios.post('/auth/login', { username, password }).then(res => {
-                const { id, username, profile_pic } = res.data
+                // const { id, username, profile_pic } = res.data
                 this.props.history.push('/dashboard')
-                this.props.loginUser(id, username, profile_pic)
+                this.props.loginUser(res.data)
 
             }).catch(err => alert(err.response.request.response))
         } else {
