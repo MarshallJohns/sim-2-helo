@@ -127,5 +127,15 @@
   justify-content: space-between;
 }
 
+.posts {
+  display: flex;
+
+}
+
+.posts > h2 {
+  margin-left: 20px;
+  color: red;
+}
+
 
 

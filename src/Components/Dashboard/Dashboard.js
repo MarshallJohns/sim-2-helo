@@ -14,57 +14,78 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        this.handlePosts()
+        this.getPosts()
     }
 
-    handlePosts() {
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.userPosts !== prevState.userPosts) {
+            this.getPosts()
+        }
+        if (this.state.search !== prevState.search) {
+            this.getPosts()
+        }
+
+    }
+
+
+    getPosts() {
         const { user_id } = this.props
         const { search, userPosts } = this.state
 
-        Axios.get(`/api/posts/${user_id}?user_posts=true`).then(res => {
-            this.setState({ posts: res.data })
-        })
-
-
         if (userPosts && search) {
-            Axios.get(`/api/posts/${user_id}?user_posts=${userPosts}&search=${search}`)
+            return Axios.get(`/api/posts/${user_id}?user_posts=true&search=${search}`)
                 .then(res => { this.setState({ posts: res.data }) })
                 .catch(err => { console.log(err.message) })
         }
 
         if (!userPosts && search) {
-            Axios.get(`/api/posts/${user_id}?search=${search}`)
+            return Axios.get(`/api/posts/${user_id}?user_posts=false?search=${search}`)
                 .then(res => { this.setState({ posts: res.data }) })
                 .catch(err => console.log(err.message))
         }
 
         if (!userPosts) {
-            Axios.get(`/api/posts/${user_id}?user_posts=false`)
+            return Axios.get(`/api/posts/${user_id}?user_posts=false`)
                 .then(res => this.setState({ posts: res.data }))
                 .catch(err => console.log(err.message))
         }
 
+        Axios.get(`/api/posts/${user_id}?user_posts=${userPosts}`).then(res => {
+            this.setState({ posts: res.data })
+        })
     }
 
     handleSearch = (e) => {
         this.setState({ search: e.target.value })
     }
 
+    handleCheckbox = () => {
+        this.setState({ userPosts: !this.state.userPosts })
+    }
+
+    handleReset = () => {
+        this.setState({ search: '', userPosts: true })
+
+    }
+
     render() {
-        const posts = this.state.posts.map(post => {
-            return (<div>{post.title}</div>)
+        const posts = this.state.posts.map((post, index) => {
+            return (<div key={index} className='posts'>
+                <h1>{post.title}</h1>
+                <h2>{post.username}</h2>
+            </div>)
         })
-        { console.log(posts) }
+
 
         return (
             <div className='dashboard'>
                 <div className='search'>
                     <div className='search-bar'>
                         <input onChange={(e) => this.handleSearch(e)} name='search' type='text' value={this.state.search} />
-                        <button>Search</button>
-                        <button>Reset</button>
+                        <button onclick={() => this.getPosts()}>Search</button>
+                        <button onClick={() => this.handleReset()}>Reset</button>
                     </div>
-                    <div className='checkbox'> My Posts <input type='checkbox' onClick={() => this.setState({ userPosts: !this.state.userPosts })} /></div>
+                    <div className='checkbox'> My Posts <input checked={this.state.userPosts} type='checkbox' onChange={() => this.handleCheckbox()} /></div>
                 </div>
                 <div>{posts}</div>
             </div >

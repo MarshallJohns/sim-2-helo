@@ -66,7 +66,10 @@ module.exports = {
         }
 
         //* if user_posts is true and no search
-        res.status(200).send(posts)
+        if (user_posts === 'true') {
+            return res.status(200).send(posts)
+
+        }
 
     }
 }
