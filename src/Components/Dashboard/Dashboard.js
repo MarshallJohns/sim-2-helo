@@ -73,6 +73,7 @@ class Dashboard extends Component {
             return (<div key={index} className='posts'>
                 <h1>{post.title}</h1>
                 <h2>{post.username}</h2>
+                <img src={post.profile_pic} alt='user'/>
             </div>)
         })
 
@@ -82,7 +83,7 @@ class Dashboard extends Component {
                 <div className='search'>
                     <div className='search-bar'>
                         <input onChange={(e) => this.handleSearch(e)} name='search' type='text' value={this.state.search} />
-                        <button onclick={() => this.getPosts()}>Search</button>
+                        <button onClick={() => this.getPosts()}>Search</button>
                         <button onClick={() => this.handleReset()}>Reset</button>
                     </div>
                     <div className='checkbox'> My Posts <input checked={this.state.userPosts} type='checkbox' onChange={() => this.handleCheckbox()} /></div>

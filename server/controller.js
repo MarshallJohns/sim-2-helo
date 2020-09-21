@@ -13,7 +13,9 @@ module.exports = {
         const salt = bcrypt.genSaltSync(10)
         const hash = bcrypt.hashSync(password, salt)
 
-        const [newUser] = await db.register_user([username, hash])
+        const profilePic = `https://robohash.org/${username}`
+
+        const [newUser] = await db.register_user([username, hash, profilePic])
         res.status(200).send(newUser)
     },
 
