@@ -96,4 +96,8 @@ module.exports = {
     await db.create_post([title, imgUrl, content, userId]);
     res.sendStatus(200);
   },
+
+  deletePost: async (req, res) => {
+
+  }
 };
