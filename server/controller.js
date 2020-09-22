@@ -98,6 +98,10 @@ module.exports = {
   },
 
   deletePost: async (req, res) => {
-
+    const {postId} = req.params
+    const db = req.app.get('db')
+    
+    await db.delete_post([postId])
+    res.sendStatus(200)
   }
 };
