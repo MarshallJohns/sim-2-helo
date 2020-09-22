@@ -87,4 +87,13 @@ module.exports = {
 
     res.status(200).send(post);
   },
+
+  createPost: async (req, res) => {
+    const { title, imgUrl, content } = req.body;
+    const { userId } = req.params;
+    const db = req.app.get("db");
+
+    await db.create_post([title, imgUrl, content, userId]);
+    res.sendStatus(200);
+  },
 };

@@ -16,7 +16,14 @@ class Post extends Component {
 
   componentDidMount() {
     Axios.get(`/api${this.props.location.pathname}`).then((res) => {
-      console.log(res.data);
+      const { title, img, content, username, profile_pic } = res.data;
+      this.setState({
+        title: title,
+        image: img,
+        content: content,
+        username: username,
+        profilePic: profile_pic,
+      });
     });
   }
 
