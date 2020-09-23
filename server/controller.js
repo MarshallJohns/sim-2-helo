@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const { isCompositeComponent } = require("react-dom/test-utils");
 
 module.exports = {
   registerUser: async (req, res) => {
@@ -16,7 +17,11 @@ module.exports = {
     const profilePic = `https://robohash.org/${username}`;
 
     const [newUser] = await db.register_user([username, hash, profilePic]);
-    res.status(200).send(newUser);
+
+    req.session.user = newUser
+
+
+    res.status(200).send(req.session.user);
   },
 
   login: async (req, res) => {
@@ -37,45 +42,64 @@ module.exports = {
 
     delete existingUser.password;
 
-    res.status(200).send(existingUser);
+    req.session.user = existingUser
+    res.status(200).send(req.session.user);
+  },
+
+  logout: async (req, res) => {
+    console.log('hit logout')
+    await req.session.destroy()
+    console.log(req.session.user)
+    res.sendStatus(200)
+  },
+
+  getUser: (req, res) => {
+    if (req.session.user) {
+      res.status(200).send(req.session.user)
+    } else {
+      res.status(404).send('No session found')
+    }
+
   },
 
   getPosts: async (req, res) => {
     const db = req.app.get("db");
-    const { userId } = req.params;
+    const { id } = req.session.user;
     const { user_posts, search } = req.query;
 
     const posts = await db.get_posts();
 
     //* if user_posts is true and there is a search
-    if (user_posts != "false" && search) {
-      const lowerCaseSearch = search.toLowerCase();
-      const filteredPosts = posts.filter((post) =>
-        post.title.toLowerCase().includes(lowerCaseSearch)
-      );
-      return res.status(200).send(filteredPosts);
-    }
-
-    //* if user_posts is false but there is a search
-    if (user_posts === "false" && search) {
-      const lowerCaseSearch = search.toLowerCase();
-      const filteredPosts = posts.filter(
-        (post) =>
-          post.author_id != userId &&
+    if (req.session.user) {
+      if (user_posts != "false" && search) {
+        const lowerCaseSearch = search.toLowerCase();
+        const filteredPosts = posts.filter((post) =>
           post.title.toLowerCase().includes(lowerCaseSearch)
-      );
-      return res.status(200).send(filteredPosts);
-    }
+        );
+        return res.status(200).send(filteredPosts);
+      }
 
-    //* if user_posts if false and no search
-    if (user_posts === "false") {
-      const filteredPosts = posts.filter((post) => post.author_id != userId);
-      return res.status(200).send(filteredPosts);
-    }
+      //* if user_posts is false but there is a search
+      if (user_posts === "false" && search) {
+        const lowerCaseSearch = search.toLowerCase();
+        const filteredPosts = posts.filter(
+          (post) =>
+            post.author_id != id &&
+            post.title.toLowerCase().includes(lowerCaseSearch)
+        );
+        return res.status(200).send(filteredPosts);
+      }
 
-    //* if user_posts is true and no search
-    if (user_posts === "true") {
-      return res.status(200).send(posts);
+      //* if user_posts if false and no search
+      if (user_posts === "false") {
+        const filteredPosts = posts.filter((post) => post.author_id != id);
+        return res.status(200).send(filteredPosts);
+      }
+
+      //* if user_posts is true and no search
+      if (user_posts === "true") {
+        return res.status(200).send(posts);
+      }
     }
   },
 
@@ -90,17 +114,17 @@ module.exports = {
 
   createPost: async (req, res) => {
     const { title, imgUrl, content } = req.body;
-    const { userId } = req.params;
+    const { id } = req.session.user;
     const db = req.app.get("db");
 
-    await db.create_post([title, imgUrl, content, userId]);
+    await db.create_post([title, imgUrl, content, id]);
     res.sendStatus(200);
   },
 
   deletePost: async (req, res) => {
-    const {postId} = req.params
+    const { postId } = req.params
     const db = req.app.get('db')
-    
+
     await db.delete_post([postId])
     res.sendStatus(200)
   }

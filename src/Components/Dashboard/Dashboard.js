@@ -1,6 +1,5 @@
 import Axios from "axios";
 import React, { Component } from "react";
-import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
 class Dashboard extends Component {
@@ -27,11 +26,10 @@ class Dashboard extends Component {
   }
 
   getPosts() {
-    const { user_id } = this.props;
     const { search, userPosts } = this.state;
 
     if (userPosts && search) {
-      return Axios.get(`/api/posts/${user_id}?user_posts=true&search=${search}`)
+      return Axios.get(`/api/posts?user_posts=true&search=${search}`)
         .then((res) => {
           this.setState({ posts: res.data });
         })
@@ -42,7 +40,7 @@ class Dashboard extends Component {
 
     if (!userPosts && search) {
       return Axios.get(
-        `/api/posts/${user_id}?user_posts=false?search=${search}`
+        `/api/posts?user_posts=false?search=${search}`
       )
         .then((res) => {
           this.setState({ posts: res.data });
@@ -51,12 +49,12 @@ class Dashboard extends Component {
     }
 
     if (!userPosts) {
-      return Axios.get(`/api/posts/${user_id}?user_posts=false`)
+      return Axios.get(`/api/posts?user_posts=false`)
         .then((res) => this.setState({ posts: res.data }))
         .catch((err) => console.log(err.message));
     }
 
-    Axios.get(`/api/posts/${user_id}?user_posts=${userPosts}`).then((res) => {
+    Axios.get(`/api/posts?user_posts=${userPosts}`).then((res) => {
       this.setState({ posts: res.data });
     });
   }
@@ -72,6 +70,7 @@ class Dashboard extends Component {
   handleReset = () => {
     this.setState({ search: "", userPosts: true });
   };
+
 
   render() {
     const posts = this.state.posts.map((post, index) => {
@@ -115,6 +114,6 @@ class Dashboard extends Component {
   }
 }
 
-const mapStateToProps = (reduxState) => reduxState;
 
-export default connect(mapStateToProps)(Dashboard);
+
+export default Dashboard;

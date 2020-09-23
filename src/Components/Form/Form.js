@@ -1,6 +1,6 @@
 import Axios from "axios";
 import React, { Component } from "react";
-import { connect } from "react-redux";
+
 
 class Form extends Component {
   constructor() {
@@ -18,8 +18,7 @@ class Form extends Component {
 
   handlePost = () => {
     const { title, imgUrl, content } = this.state;
-    const { user_id } = this.props;
-    Axios.post(`/api/posts/${user_id}`, { title, imgUrl, content }).then(
+    Axios.post(`/api/posts`, { title, imgUrl, content }).then(
       (res) => {
         this.handleReset();
         this.props.history.push("/dashboard");
@@ -79,5 +78,5 @@ class Form extends Component {
     );
   }
 }
-const mapStateToProps = (reduxState) => reduxState;
-export default connect(mapStateToProps)(Form);
+
+export default Form;

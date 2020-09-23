@@ -27,6 +27,7 @@ class Post extends Component {
     })
   }
 
+
   render() {
     const { title, image, content, username, profile_pic, author_id } = this.state.post;
     const { user_id } = this.props
